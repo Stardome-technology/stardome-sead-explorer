@@ -1,0 +1,74 @@
+# Remote compose file — pulls pre-built images from ghcr.io.
+# Usage: docker compose -f docker-compose.remote.yml up -d
+
+services:
+  sead-explorer-db:
+    image: postgres:16-alpine
+    container_name: sead-explorer-db
+    environment:
+      POSTGRES_DB: sead_explorer
+      POSTGRES_USER: explorer
+      POSTGRES_PASSWORD: explorer
+    volumes:
+      - sead_explorer_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U explorer -d sead_explorer"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sead-network
+    restart: unless-stopped
+
+  sead-explorer-api:
+    image: ghcr.io/stardome-technology/sead-explorer/sead-explorer-api:latest
+    container_name: sead-explorer-api
+    env_file:
+      - .env
+    environment:
+      - SEAD_CORE_URL=${SEAD_CORE_URL:?error}
+      - DATABASE_URL=${DATABASE_URL:?error}
+      - EDGE_SERVICE_URL=${EDGE_SERVICE_URL:-}
+      - STORAGE_GATEWAY_URL=${STORAGE_GATEWAY_URL:-}
+      - VERIFIER_URL=${VERIFIER_URL:-}
+      - OBSERVER_ORG_ID=${OBSERVER_ORG_ID:-}
+      - OBSERVER_NODE_ID=${OBSERVER_NODE_ID:-}
+      - IPFS_API_URL=${IPFS_API_URL:-}
+      - INGESTION_INTERVAL_SECONDS=${INGESTION_INTERVAL_SECONDS:-5}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    depends_on:
+      sead-explorer-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; exit(0) if urllib.request.urlopen('http://localhost:8086/health').status == 200 else exit(1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - sead-network
+    restart: unless-stopped
+
+  sead-explorer-ui:
+    image: ghcr.io/stardome-technology/sead-explorer/sead-explorer-ui:latest
+    container_name: sead-explorer-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      sead-explorer-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - sead-network
+    restart: unless-stopped
+
+volumes:
+  sead_explorer_db:
+    name: sead_explorer_db
+
+networks:
+  sead-network:
+    external: true
