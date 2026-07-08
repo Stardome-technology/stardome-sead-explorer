@@ -44,6 +44,7 @@ docker network create sead-network 2>/dev/null || true
 
 # Create .env with your configuration
 # See reference below for all variables
+docker compose -f docker-compose.remote.yml pull
 docker compose -f docker-compose.remote.yml up -d
 
 # Verify
@@ -62,7 +63,7 @@ curl http://localhost:3000/
 | `EDGE_SERVICE_URL` | No | — | edge-service HTTP endpoint |
 | `STORAGE_GATEWAY_URL` | No | — | storage-gateway HTTP endpoint |
 | `VERIFIER_URL` | No | — | verifier-service HTTP endpoint |
-| `IPFS_API_URL` | No | — | IPFS node API endpoint |
+| `IPFS_API_URL` | No | `https://ipfs.stardome.cloud` | IPFS node API endpoint |
 | `INGESTION_INTERVAL_SECONDS` | No | 5 | Polling interval |
 | `LOG_LEVEL` | No | INFO | Logging level |
 
