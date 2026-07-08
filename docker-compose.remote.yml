@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   sead-explorer-api:
-    image: ghcr.io/stardome-technology/sead-explorer/sead-explorer-api:latest
+    image: ghcr.io/stardome-technology/stardome-sead-explorer/sead-explorer-api:latest
     container_name: sead-explorer-api
     env_file:
       - .env
@@ -49,7 +49,7 @@ services:
     restart: unless-stopped
 
   sead-explorer-ui:
-    image: ghcr.io/stardome-technology/sead-explorer/sead-explorer-ui:latest
+    image: ghcr.io/stardome-technology/stardome-sead-explorer/sead-explorer-ui:latest
     container_name: sead-explorer-ui
     ports:
       - "3000:80"
