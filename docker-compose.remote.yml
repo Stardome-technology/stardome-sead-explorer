@@ -23,6 +23,8 @@ services:
   sead-explorer-api:
     image: ghcr.io/stardome-technology/stardome-sead-explorer/explorer-api:latest
     container_name: sead-explorer-api
+    ports:
+      - "8086:8086"
     env_file:
       - .env
     environment:
