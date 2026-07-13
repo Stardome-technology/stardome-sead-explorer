@@ -39,17 +39,14 @@ graph LR
 ### Production deploy
 
 ```bash
-# Ensure sead-network exists
-docker network create sead-network 2>/dev/null || true
-
 # Create .env with your configuration
 # See reference below for all variables
 docker compose -f docker-compose.remote.yml pull
 docker compose -f docker-compose.remote.yml up -d
 
-# Verify
-curl http://localhost:8086/health
-curl http://localhost:3000/
+# Verify — use 127.0.0.1, not localhost (IPv6 resolution issues)
+curl http://127.0.0.1:8086/health
+curl http://127.0.0.1:3000/
 ```
 
 ### Configuration
