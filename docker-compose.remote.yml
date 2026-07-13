@@ -83,4 +83,4 @@ networks:
   # `name: sead-network`, this override can be removed (or set to sead-network).
   sead-network:
     external: true
-    name: stardome-sead_sead-network
+    name: sead-network
