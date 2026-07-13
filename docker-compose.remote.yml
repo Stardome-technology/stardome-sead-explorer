@@ -74,13 +74,6 @@ volumes:
     name: sead_explorer_db
 
 networks:
-  # This must match the network name created by the stardome-sead compose stack.
-  # If the SEAD compose files live in a directory named "stardome-sead", Docker
-  # Compose prefixes the network, producing "stardome-sead_sead-network".
-  # Use "sead-network" if the SEAD stack is configured to use an external network
-  # created with: docker network create sead-network
-  # NOTE: After the SEAD stack is recreated with the standardized
-  # `name: sead-network`, this override can be removed (or set to sead-network).
   sead-network:
     external: true
     name: sead-network
