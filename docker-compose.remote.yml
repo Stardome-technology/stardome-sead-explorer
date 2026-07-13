@@ -59,7 +59,9 @@ services:
       sead-explorer-api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      # Use 127.0.0.1 explicitly — "localhost" may resolve to ::1 which nginx
+      # doesn't listen on (nginx binds 0.0.0.0:80, IPv4 only).
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/"]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -72,5 +74,13 @@ volumes:
     name: sead_explorer_db
 
 networks:
+  # This must match the network name created by the stardome-sead compose stack.
+  # If the SEAD compose files live in a directory named "stardome-sead", Docker
+  # Compose prefixes the network, producing "stardome-sead_sead-network".
+  # Use "sead-network" if the SEAD stack is configured to use an external network
+  # created with: docker network create sead-network
+  # NOTE: After the SEAD stack is recreated with the standardized
+  # `name: sead-network`, this override can be removed (or set to sead-network).
   sead-network:
     external: true
+    name: stardome-sead_sead-network
