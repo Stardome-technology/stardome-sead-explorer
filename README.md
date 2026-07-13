@@ -39,6 +39,10 @@ graph LR
 ### Production deploy
 
 ```bash
+# Ensure sead-network exists (only needed if running standalone without the
+# SEAD stack; the SEAD stack auto-creates this network at startup)
+docker network create sead-network 2>/dev/null || true
+
 # Create .env with your configuration
 # See reference below for all variables
 docker compose -f docker-compose.remote.yml pull
