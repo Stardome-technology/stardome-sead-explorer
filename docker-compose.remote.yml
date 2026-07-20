@@ -4,7 +4,7 @@
 services:
   sead-explorer-db:
     image: postgres:16-alpine
-    container_name: sead-explorer-db
+    container_name: stardome-sead-explorer-db
     environment:
       POSTGRES_DB: sead_explorer
       POSTGRES_USER: explorer
@@ -22,7 +22,7 @@ services:
 
   sead-explorer-api:
     image: ghcr.io/stardome-technology/stardome-sead-explorer/explorer-api:latest
-    container_name: sead-explorer-api
+    container_name: stardome-sead-explorer-api
     ports:
       - "8086:8086"
     env_file:
@@ -52,7 +52,7 @@ services:
 
   sead-explorer-ui:
     image: ghcr.io/stardome-technology/stardome-sead-explorer/explorer-ui:latest
-    container_name: sead-explorer-ui
+    container_name: stardome-sead-explorer-ui
     ports:
       - "3000:80"
     depends_on:
