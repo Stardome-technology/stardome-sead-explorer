@@ -30,12 +30,12 @@ services:
     environment:
       - SEAD_CORE_URL=${SEAD_CORE_URL:?error}
       - DATABASE_URL=${DATABASE_URL:?error}
-      - EDGE_SERVICE_URL=${EDGE_SERVICE_URL:-}
-      - STORAGE_GATEWAY_URL=${STORAGE_GATEWAY_URL:-}
-      - VERIFIER_URL=${VERIFIER_URL:-}
+      - EDGE_SERVICE_URL=${EDGE_SERVICE_URL:-http://edge-service:8081}
+      - STORAGE_GATEWAY_URL=${STORAGE_GATEWAY_URL:-http://storage-gateway:8082}
+      - VERIFIER_URL=${VERIFIER_URL:-http://verifier:8084}
       - OBSERVER_ORG_ID=${OBSERVER_ORG_ID:-}
       - OBSERVER_NODE_ID=${OBSERVER_NODE_ID:-}
-      - IPFS_API_URL=${IPFS_API_URL:-}
+      - IPFS_API_URL=${IPFS_API_URL:-https://ipfs.stardome.cloud}
       - INGESTION_INTERVAL_SECONDS=${INGESTION_INTERVAL_SECONDS:-5}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
