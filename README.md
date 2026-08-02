@@ -69,7 +69,7 @@ curl http://127.0.0.1:3000/
 | `LOG_LEVEL` | No | INFO | Logging level |
 
 #### Note about the SEAD Service URLs
-If sead-eplorer is running in a docker-compose environment, use the following URLs:
+If sead-explorer is running in a docker-compose environment, use the following URLs:
 ```txt
 SEAD_CORE_URL=http://sead-core:8080
 EDGE_SERVICE_URL=http://edge-service:8081
@@ -78,14 +78,14 @@ VERIFIER_URL=http://verifier:8084
 ```
 If sead-explorer is running outside of docker-compose, on the host machine, use the following URLs:
 ```txt
-SEAD_CORE_URL=http://localhost:8080
+SEAD_CORE_URL=http://localhost:30080
 EDGE_SERVICE_URL=http://localhost:8081
 STORAGE_GATEWAY_URL=http://localhost:8082
 VERIFIER_URL=http://localhost:8084
 ```
 Else if sead-explorer is running outside of docker-compose, on a remote machine, use the remote IP:
 ```txt
-SEAD_CORE_URL=http://<IP>:8080
+SEAD_CORE_URL=http://<IP>:30080
 EDGE_SERVICE_URL=http://<IP>:8081
 STORAGE_GATEWAY_URL=http://<IP>:8082
 VERIFIER_URL=http://<IP>:8084
