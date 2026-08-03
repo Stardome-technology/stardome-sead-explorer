@@ -36,7 +36,7 @@ services:
       - OBSERVER_ORG_ID=${OBSERVER_ORG_ID:-}
       - OBSERVER_NODE_ID=${OBSERVER_NODE_ID:-}
       - IPFS_API_URL=${IPFS_API_URL:-https://ipfs.stardome.cloud}
-      - INGESTION_INTERVAL_SECONDS=${INGESTION_INTERVAL_SECONDS:-5}
+      - INGESTION_INTERVAL_SECONDS=${INGESTION_INTERVAL_SECONDS:-2}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
       sead-explorer-db:
