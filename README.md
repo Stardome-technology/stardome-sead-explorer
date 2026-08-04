@@ -51,6 +51,19 @@ docker compose -f docker-compose.remote.yml up -d
 # Verify — use 127.0.0.1, not localhost (IPv6 resolution issues)
 curl http://127.0.0.1:8086/health
 curl http://127.0.0.1:3000/
+
+## Public ports to open
+
+For an integrator deploying the explorer, these ports must be reachable from
+browsers / monitoring:
+
+- **`8086/tcp`** — FastAPI backend (`/health`, `/api/v1/*`, `/metrics`)
+- **`3000/tcp`** — React UI (served via nginx)
+
+These are the only public ports. The explorer reaches sead-core, edge-service,
+storage-gateway, and verifier over the Docker network internally; those service
+ports should **not** be exposed publicly. If the UI and API are only used
+locally, both can stay closed to the internet.
 ```
 
 ### Configuration
