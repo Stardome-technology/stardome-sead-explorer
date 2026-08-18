@@ -37,6 +37,13 @@ services:
       # https:// with a self-signed/private CA (single-side TLS). Point at the
       # mounted ca.crt; leave empty to use the system trust store.
       - SEAD_CA_CERT=${SEAD_CA_CERT:-/etc/explorer/certs/ca.crt}
+      # Gateway public HTTPS (https://<node>:30080) requires `Authorization:
+      # Bearer` matching the gateway's GATEWAY_AUTH_SECRET (or an edge token) on
+      # every request. If the explorer reaches the SEAD services via the gateway,
+      # set the same value here and include a Bearer header in the API's outbound
+      # calls. This is NOT a cross-org token — cross-org access is authorized by
+      # the SEAD DAG, not a shared transport secret.
+      - SEAD_GATEWAY_TOKEN=${SEAD_GATEWAY_TOKEN:-}
       - OBSERVER_ORG_ID=${OBSERVER_ORG_ID:-}
       - OBSERVER_NODE_ID=${OBSERVER_NODE_ID:-}
       - IPFS_API_URL=${IPFS_API_URL:-https://ipfs.stardome.cloud}
