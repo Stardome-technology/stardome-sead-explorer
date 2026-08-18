@@ -104,6 +104,43 @@ STORAGE_GATEWAY_URL=http://<IP>:8082
 VERIFIER_URL=http://<IP>:8084
 ```
 
+#### Trusting the gateway's TLS cert (closed deployments only)
+
+If the explorer calls a SEAD stack over `https://` (the gateway terminates TLS at
+`:30080`), it must trust the gateway's certificate. For a **private/self-signed CA**
+backend (see the gateway/setup docs), mount the CA cert so the FastAPI client verifies
+the gateway. This is only appropriate for **closed, isolated deployments**  where every node is under your control.
+
+- Distribute **only `ca.crt`** as the trust anchor. Do **not** distribute `ca.srl`
+  (CA working state, not a trust artifact) or any private key material.
+- **Not advised for public production:** a publicly-reachable gateway should use a
+  public cert (e.g. Let's Encrypt), trusted through the standard PKI with no manual
+  CA distribution.
+
+#### How the explorer trusts the CA
+
+The `sead-explorer-api` compose service already mounts `./certs` as
+`/etc/explorer/certs` (read-only) and defaults `SEAD_CA_CERT` to
+`/etc/explorer/certs/ca.crt`. To make the API trust a private/self-signed CA,
+just drop `ca.crt` into `./certs` (from the gateway/Strix box):
+
+```bash
+mkdir -p certs
+scp bd@strix:/etc/myca/certs/ca.crt certs/ca.crt
+```
+
+Then start/restart the API:
+
+```bash
+docker compose -f docker-compose.remote.yml up -d
+```
+
+With `SEAD_CORE_URL=https://<IP>:30080` (and the other `*_URL` vars pointing at
+`https://` too) in `.env`, the FastAPI client uses `CABundle` from
+`SEAD_CA_CERT` and trusts the gateway without `-k`/insecure flags.
+
+> `certs/` is gitignored in this repo, so the CA bundle will not be committed.
+
 ## API Endpoints
 
 | Method | Path | Description |
