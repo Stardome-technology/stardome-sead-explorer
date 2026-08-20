@@ -122,14 +122,7 @@ the gateway. This is only appropriate for **closed, isolated deployments**  wher
 The `sead-explorer-api` compose service already mounts `./certs` as
 `/etc/explorer/certs` (read-only) and defaults `SEAD_CA_CERT` to
 `/etc/explorer/certs/ca.crt`. To make the API trust a private/self-signed CA,
-just drop `ca.crt` into `./certs` (from the gateway/Strix box):
-
-```bash
-mkdir -p certs
-scp bd@strix:/etc/myca/certs/ca.crt certs/ca.crt
-```
-
-Then start/restart the API:
+just drop `ca.crt` into `./certs` (from the local/remote secure ca box) the start/restart the API:
 
 ```bash
 docker compose -f docker-compose.remote.yml up -d
