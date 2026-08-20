@@ -9,10 +9,10 @@ authority, registry, or protocol component.
 ```mermaid
 graph LR
     subgraph "sead-service (Docker network)"
-        SC[sead-core:8080]
-        ES[edge-service:8081]
-        SG[storage-gateway:8082]
-        VR[verifier:8084]
+        GW[gateway:30080 HTTPS]
+        SC[sead-core :50051 gRPC]
+        ES[edge-service :50055 gRPC]
+        SG[storage-gateway :50052 gRPC]
     end
 
     subgraph "sead-explorer (Docker compose)"
@@ -21,10 +21,7 @@ graph LR
         UI[React UI / nginx]
     end
 
-    API -->|polling| SC
-    API -->|optional| ES
-    API -->|optional| SG
-    API -->|optional| VR
+    API -->|polling via gateway| GW
     API -->|asyncpg| DB
     UI -->|HTTP /api| API
 ```
@@ -70,39 +67,46 @@ locally, both can stay closed to the internet.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `SEAD_CORE_URL` | Yes | — | sead-core HTTP endpoint |
+| `SEAD_CORE_URL` | Yes | — | gateway HTTPS endpoint (all C++ services reached via gateway) |
 | `DATABASE_URL` | Yes | — | PostgreSQL connection string |
 | `OBSERVER_ORG_ID` | Yes | — | Observer organization identity |
 | `OBSERVER_NODE_ID` | Yes | — | Observer node identity |
-| `EDGE_SERVICE_URL` | No | — | edge-service HTTP endpoint |
-| `STORAGE_GATEWAY_URL` | No | — | storage-gateway HTTP endpoint |
-| `VERIFIER_URL` | No | — | verifier-service HTTP endpoint |
+| `EDGE_SERVICE_URL` | No | — | edge-service endpoint (via gateway) |
+| `STORAGE_GATEWAY_URL` | No | — | storage-gateway endpoint (via gateway) |
+| `VERIFIER_URL` | No | — | verifier/auth endpoint (collapsed into gateway) |
 | `IPFS_API_URL` | No | `https://ipfs.stardome.cloud` | IPFS node API endpoint |
 | `INGESTION_INTERVAL_SECONDS` | No | 5 | Polling interval |
 | `LOG_LEVEL` | No | INFO | Logging level |
 
 #### Note about the SEAD Service URLs
-If sead-explorer is running in a docker-compose environment, use the following URLs:
+After the Go-gateway migration, the C++ services are **gRPC-only** and publish no HTTP
+ports. The explorer reaches everything through the **gateway** (the single HTTPS
+surface on port `30080`), so all `*_URL` vars point at `https://...:30080`.
+
+If sead-explorer is running in a docker-compose environment (on `sead-network`), use the gateway service name.
+The gateway terminates TLS even on the internal network, so use `https://` and trust the CA via `SEAD_CA_CERT`:
 ```txt
-SEAD_CORE_URL=http://sead-core:8080
-EDGE_SERVICE_URL=http://edge-service:8081
-STORAGE_GATEWAY_URL=http://storage-gateway:8082
-VERIFIER_URL=http://verifier:8084
+SEAD_CORE_URL=https://gateway:30080
+EDGE_SERVICE_URL=https://gateway:30080
+STORAGE_GATEWAY_URL=https://gateway:30080
+VERIFIER_URL=https://gateway:30080
 ```
 If sead-explorer is running outside of docker-compose, on the host machine, use the following URLs:
 ```txt
-SEAD_CORE_URL=http://localhost:30080
-EDGE_SERVICE_URL=http://localhost:8081
-STORAGE_GATEWAY_URL=http://localhost:8082
-VERIFIER_URL=http://localhost:8084
+SEAD_CORE_URL=https://localhost:30080
+EDGE_SERVICE_URL=https://localhost:30080
+STORAGE_GATEWAY_URL=https://localhost:30080
+VERIFIER_URL=https://localhost:30080
 ```
 Else if sead-explorer is running outside of docker-compose, on a remote machine, use the remote IP:
 ```txt
-SEAD_CORE_URL=http://<IP>:30080
-EDGE_SERVICE_URL=http://<IP>:8081
-STORAGE_GATEWAY_URL=http://<IP>:8082
-VERIFIER_URL=http://<IP>:8084
+SEAD_CORE_URL=https://<IP>:30080
+EDGE_SERVICE_URL=https://<IP>:30080
+STORAGE_GATEWAY_URL=https://<IP>:30080
+VERIFIER_URL=https://<IP>:30080
 ```
+> When using `https://` against a self-signed/private-CA gateway, set `SEAD_CA_CERT`
+> (see below) so the FastAPI client trusts the gateway's cert.
 
 #### Trusting the gateway's TLS cert (closed deployments only)
 
