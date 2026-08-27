@@ -74,6 +74,7 @@ locally, both can stay closed to the internet.
 | `EDGE_SERVICE_URL` | No | — | edge-service endpoint (via gateway) |
 | `STORAGE_GATEWAY_URL` | No | — | storage-gateway endpoint (via gateway) |
 | `VERIFIER_URL` | No | — | verifier/auth endpoint (collapsed into gateway) |
+| `SEAD_AUTH_SECRET` | No | — | Shared secret for gateway requests. The gateway requires a Bearer token on all endpoints except `/health`; set this to the gateway's `SEAD_AUTH_SECRET` so the frontier-walk ingestion is accepted. If empty, no Authorization header is sent (for gateways with auth disabled) |
 | `IPFS_API_URL` | No | `https://ipfs.stardome.cloud` | IPFS node API endpoint |
 | `INGESTION_INTERVAL_SECONDS` | No | 5 | Polling interval |
 | `LOG_LEVEL` | No | INFO | Logging level |
