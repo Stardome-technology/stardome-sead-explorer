@@ -30,14 +30,28 @@ services:
     environment:
       - SEAD_CORE_URL=${SEAD_CORE_URL:?error}
       - DATABASE_URL=${DATABASE_URL:?error}
-      - EDGE_SERVICE_URL=${EDGE_SERVICE_URL:-http://edge-service:8081}
-      - STORAGE_GATEWAY_URL=${STORAGE_GATEWAY_URL:-http://storage-gateway:8082}
-      - VERIFIER_URL=${VERIFIER_URL:-http://verifier:8084}
+      - EDGE_SERVICE_URL=${EDGE_SERVICE_URL:-https://gateway:30080}
+      - STORAGE_GATEWAY_URL=${STORAGE_GATEWAY_URL:-https://gateway:30080}
+      - VERIFIER_URL=${VERIFIER_URL:-https://gateway:30080}
+      # Optional CA bundle to trust when the sead-service/gateway URLs are
+      # https:// with a self-signed/private CA (single-side TLS). Point at the
+      # mounted ca.crt; leave empty to use the system trust store.
+      - SEAD_CA_CERT=${SEAD_CA_CERT:-/etc/explorer/certs/ca.crt}
+      # Gateway public HTTPS (https://<node>:30080) requires `Authorization:
+      # Bearer` matching the gateway's GATEWAY_AUTH_SECRET (or an edge token) on
+      # every request. If the explorer reaches the SEAD services via the gateway,
+      # set the same value here and include a Bearer header in the API's outbound
+      # calls. This is NOT a cross-org token — cross-org access is authorized by
+      # the SEAD DAG, not a shared transport secret.
+      - SEAD_GATEWAY_TOKEN=${SEAD_GATEWAY_TOKEN:-}
       - OBSERVER_ORG_ID=${OBSERVER_ORG_ID:-}
       - OBSERVER_NODE_ID=${OBSERVER_NODE_ID:-}
       - IPFS_API_URL=${IPFS_API_URL:-https://ipfs.stardome.cloud}
       - INGESTION_INTERVAL_SECONDS=${INGESTION_INTERVAL_SECONDS:-2}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      # Mount the CA bundle the explorer trusts for the gateway's self-signed TLS.
+      - ./certs:/etc/explorer/certs:ro
     depends_on:
       sead-explorer-db:
         condition: service_healthy
