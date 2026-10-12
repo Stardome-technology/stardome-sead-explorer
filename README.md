@@ -151,3 +151,8 @@ With `SEAD_CORE_URL=https://<IP>:30080` (and the other `*_URL` vars pointing at
 | GET | `/api/v1/events/{event_id}` | Event detail |
 | GET | `/api/v1/ipfs/status` | IPFS status |
 | GET | `/metrics` | Prometheus metrics |
+
+## Git workflow
+This repository follows GitHub Flow (https://docs.github.com/en/get-started/using-github/github-flow).
+The authoritative rules for contributors and agents are in the `## Git workflow`
+section of [AGENTS.md](AGENTS.md).
